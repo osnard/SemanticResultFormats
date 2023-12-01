@@ -99,7 +99,12 @@ class Filtered extends ResultPrinter {
 	 */
 	public function getParser() {
 		if ( $this->parser === null ) {
-			$this->setParser( MediaWikiServices::getInstance()->getParser() );
+			$services = MediaWikiServices::getInstance();
+			$localParser = $services->getParserFactory()->create();
+			$globalParser = $services->getParser();
+			$localParser->setOptions( $globalParser->getOptions() );
+			$localParser->clearState();
+			$this->setParser( $localParser );
 		}
 
 		return $this->parser;
